@@ -1,0 +1,17 @@
+services:
+  db:
+    image: mysql:8.1
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=api
+
+  api:
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+      args:
+        SERVICE: api
+    ports:
+      - "8080:8080"
