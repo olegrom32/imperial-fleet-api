@@ -3,6 +3,8 @@ package internal
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 
@@ -16,10 +18,15 @@ import (
 )
 
 func wire() (*server.DIContainer, error) {
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "127.0.0.1"
+	}
+
 	dbCfg := mysql.Config{
 		User:   "root",
 		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
+		Addr:   fmt.Sprintf("%s:3306", dbHost),
 		DBName: "api",
 	}
 
@@ -28,8 +35,19 @@ func wire() (*server.DIContainer, error) {
 		return nil, fmt.Errorf("failed to connect to db: %w", err)
 	}
 
-	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("db is not ready: %w", err)
+	// A simple retry to wait for DB
+	tries := 60
+	for i := 1; i <= tries; i++ {
+		err := db.Ping()
+		if err == nil {
+			break
+		}
+
+		if i == tries {
+			return nil, fmt.Errorf("db is not ready: %w", err)
+		}
+
+		time.Sleep(time.Second)
 	}
 
 	spaceshipsRepo := repository.NewSpaceship(db)

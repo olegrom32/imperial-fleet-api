@@ -1,0 +1,227 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Imperial Fleet API tech assignment
+paths:
+  /spaceship:
+    post:
+      description: Create a new spaceship record.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSpaceshipRequest"
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      description: List spaceship records with filtering.
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+        - in: query
+          name: class
+          schema:
+            type: string
+        - in: query
+          name: status
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListSpaceshipsResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+  /spaceship/{id}:
+    get:
+      description: Get spaceship record by id.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetSpaceshipResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+    put:
+      description: Update spaceship record by id.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSpaceshipRequest"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+    delete:
+      description: Delete spaceship record by id.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+components:
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Unauthorized:
+      description: Unauthorized
+    NotFound:
+      description: Not Found
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: error_type
+    CreateSpaceshipRequest:
+      type: object
+      required: [ name, class, status ]
+      properties:
+        name:
+          type: string
+        class:
+          type: string
+        status:
+          type: string
+        crew:
+          type: integer
+        image:
+          type: string
+        value:
+          type: number
+          format: float
+    UpdateSpaceshipRequest:
+      type: object
+      required: [ name, class, status ]
+      properties:
+        name:
+          type: string
+        class:
+          type: string
+        status:
+          type: string
+        crew:
+          type: integer
+        image:
+          type: string
+        value:
+          type: number
+          format: float
+    GetSpaceshipResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        class:
+          type: string
+        status:
+          type: string
+        crew:
+          type: integer
+        image:
+          type: string
+        value:
+          type: number
+          format: float
+    ListSpaceshipsResponse:
+      type: object
+      required: [ data ]
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              class:
+                type: string
+              status:
+                type: string
+              crew:
+                type: integer
+              image:
+                type: string
+              value:
+                type: number
+                format: float
+    SuccessResponse:
+      type: object
+      required: [ message ]
+      properties:
+        success:
+          type: boolean
+          example: true
+
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic

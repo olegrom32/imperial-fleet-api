@@ -8,6 +8,8 @@ services:
       - MYSQL_DATABASE=api
 
   api:
+    depends_on:
+      - db
     build:
       context: .
       dockerfile: build/Dockerfile
@@ -15,3 +17,15 @@ services:
         SERVICE: api
     ports:
       - "8080:8080"
+    environment:
+      DB_HOST: "db"
+
+  docs:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8088:8080"
+    environment:
+      - API_URL=/docs/swagger.yaml
+    volumes:
+      - "./api:/usr/share/nginx/html/docs"
+

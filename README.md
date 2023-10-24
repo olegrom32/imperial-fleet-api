@@ -23,9 +23,7 @@ A couple of handy commands are available via `make`
 
 ## Starting locally
 
-Please first run `docker-compose up db` and wait until the db is fully initialized.
-
-After that please run `docker-compose up api`. The service will be exposed on `:8080` port.
+Just run `docker-compose up` and the API will be exposed on `:8080` port after everything is initialized.
 
 ## Unit tests
 
@@ -36,3 +34,23 @@ Only one handler is covered as an example (`/internal/applciation/handler/update
 A simple basic auth is added, here are the authorized users:
 - user: user1, password: test1
 - user: user2, password: test2
+
+## API documentation (Swagger)
+
+After docker compose has started please navigate to http://localhost:8088/ for Swagger API documentation
+
+## TODOs
+
+The `armament` entity and the `spaceship->armament` relation is never populated - did not have enough time to do that.
+
+No logger
+
+Creation does not check duplicates
+
+Unit tests coverage must be improved
+
+Functional tests must be added in addition to unit tests
+
+Linter must be added
+
+Github Actions to run tests and linters before any merge to `main` must be added
